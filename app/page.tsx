@@ -13,15 +13,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { login } from "@/lib/api";
 
 export default function Home() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, Setloading] = useState(false);
+  const [erorr, setErorr] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [user, setUser] = useState<unknown>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login", { email, password });
+    Setloading(true);
+    setErorr("");
+
+    try {
+      const data = await login(username, password);
+      setUser(data);
+      console.log("login suksess", data);
+    } catch (error) {
+      console.log("gagal  Login", error);
+    } finally {
+      Setloading(false);
+    }
   };
 
   return (
@@ -32,28 +47,28 @@ export default function Home() {
             Selamat Datang
           </CardTitle>
           <CardDescription className="text-gray-400">
-            Masukkan Email dan Password Anda
+            Masukkan username dan Password Anda
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
+            {/* username */}
             <div className="space-y-2">
               <Label
-                htmlFor="email"
+                htmlFor="username"
                 className="text-gray-300 font-medium tracking-wide"
               >
-                Email
+                username
               </Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="masukkan email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="username"
+                  type="username"
+                  placeholder="masukkan username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   className="pl-9 bg-transparent border-gray-700 text-white placeholder-gray-500 focus-visible:ring-1 focus-visible:ring-white"
                 />
